@@ -2,6 +2,7 @@ package main3
 
 import (
     "io/ioutil"
+    "math"
     "strconv"
     "strings"
 )
@@ -12,6 +13,28 @@ type Graph struct {
 
 func (g *Graph) GetEdgeAt(node int) *WeightedEdge {
     return &g.Edges[node-1]
+}
+
+func (g *Graph) RefreshMinimumEdgeCost(nodeSink int) {
+    for nodeIndx := 0; nodeIndx < len(g.Edges); nodeIndx++ {
+        if nodeIndx == nodeSink-1 {
+            continue
+        }
+
+        e := &g.Edges[nodeIndx]
+        minEdgeCost := math.Inf(1)
+        for i := 0; i < len(e.Heads); i++ {
+            if e.Heads[i] != nodeSink {
+                continue
+            }
+
+            if float64(e.Weights[i]) < minEdgeCost {
+                minEdgeCost = float64(e.Weights[i])
+            }
+        }
+
+        e.MinEdgeCost = minEdgeCost
+    }
 }
 
 func (g *Graph) PopulateFromFile(filepath string) {
