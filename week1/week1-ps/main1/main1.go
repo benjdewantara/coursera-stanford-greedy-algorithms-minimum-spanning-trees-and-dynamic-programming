@@ -92,8 +92,8 @@ func (a ArrSortByRatio) Len() int {
 }
 
 func (a ArrSortByRatio) Less(i, j int) bool {
-	ratioI := a[i][0] / a[i][1]
-	ratioJ := a[j][0] / a[j][1]
+	ratioI := float64(a[i][0]) / float64(a[i][1])
+	ratioJ := float64(a[j][0]) / float64(a[j][1])
 
 	return ratioI > ratioJ
 }
