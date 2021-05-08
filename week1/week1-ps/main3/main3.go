@@ -9,8 +9,6 @@ func Main3() {
     g := Graph{}
     g.PopulateFromFile("_d4f3531eac1d289525141e95a2fea52f_edges.txt")
 
-    //g.RefreshMinimumEdgeCostAll(1)
-
     nodeSinkOrigin := 1
 
     gHeap := ConvertToGraphHeap(&g)

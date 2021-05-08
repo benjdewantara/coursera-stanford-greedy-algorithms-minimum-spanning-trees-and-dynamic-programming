@@ -82,10 +82,7 @@ func (a ArrSortByDifferenceThenWeight) Less(i, j int) bool {
 }
 
 func (a ArrSortByDifferenceThenWeight) Swap(i, j int) {
-	elemAtJ := make([]int, 3)
-	elemAtJ = a[j]
-	a[j] = a[i]
-	a[i] = elemAtJ
+	a[i], a[j] = a[j], a[i]
 }
 
 type ArrSortByRatio [][]int
@@ -102,8 +99,5 @@ func (a ArrSortByRatio) Less(i, j int) bool {
 }
 
 func (a ArrSortByRatio) Swap(i, j int) {
-	elemAtJ := make([]int, 3)
-	elemAtJ = a[j]
-	a[j] = a[i]
-	a[i] = elemAtJ
+	a[i], a[j] = a[j], a[i]
 }
