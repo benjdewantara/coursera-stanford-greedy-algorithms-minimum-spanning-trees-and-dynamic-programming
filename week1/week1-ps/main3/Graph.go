@@ -15,7 +15,7 @@ func (g *Graph) GetEdgeAt(node int) *WeightedEdge {
     return &g.Edges[node-1]
 }
 
-func (g *Graph) RefreshMinimumEdgeCost(nodeSink int) {
+func (g *Graph) RefreshMinimumEdgeCostAll(nodeSink int) {
     for nodeIndx := 0; nodeIndx < len(g.Edges); nodeIndx++ {
         if nodeIndx == nodeSink-1 {
             continue
