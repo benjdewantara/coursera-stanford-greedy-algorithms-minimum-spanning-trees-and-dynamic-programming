@@ -12,15 +12,12 @@ func Main2() {
 	unionFinder := WeightedEdgeArray.UnionFinder{}
 	unionFinder.Init(len(edgeBitmap.Arr))
 
-	edgeBitmap.Sort()
+	edgeBitmap.SortAndDetermineBitSumIndicesRange()
 
-	for edgeCost := 1; edgeCost <= edgeBitmap.GetNumBitPerNode(); edgeCost++ {
-		for nodeA := 1; nodeA <= edgeBitmap.Len(); nodeA++ {
-			for nodeB := 1; nodeB < edgeBitmap.Len(); nodeB++ {
-				if nodeA == nodeB {
-					continue
-				}
-			}
+	for edgeCost := 1; edgeCost <= edgeBitmap.GetNumBitPerNode()/2; edgeCost++ {
+		existingEdgeCost := edgeBitmap.BitSumIndicesRange[edgeCost]
+		if existingEdgeCost == nil {
+			continue
 		}
 	}
 

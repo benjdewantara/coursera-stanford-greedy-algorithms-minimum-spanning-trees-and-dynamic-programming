@@ -8,8 +8,9 @@ import (
 )
 
 type EdgeBitmap struct {
-	Arr    [][]int
-	BitSum []int
+	Arr                [][]int
+	BitSum             []int
+	BitSumIndicesRange map[int][]int
 }
 
 func (b *EdgeBitmap) Len() int {
@@ -29,8 +30,39 @@ func (b *EdgeBitmap) GetNumBitPerNode() int {
 	return len(b.Arr[0])
 }
 
-func (b *EdgeBitmap) Sort() {
+func (b *EdgeBitmap) SortAndDetermineBitSumIndicesRange() {
 	sort.Sort(b)
+
+	currentBitSum := 0
+	startIndx, endIndx := 0, 0
+	isCapturingRange := false
+	for endIndx < b.Len() {
+		if !isCapturingRange {
+			if currentBitSum < b.BitSum[endIndx] {
+				currentBitSum++
+				continue
+			} else if currentBitSum == b.BitSum[endIndx] {
+				isCapturingRange = true
+			}
+		} else {
+			if currentBitSum < b.BitSum[endIndx] {
+				endIndxDetermined := endIndx - 1
+				if b.BitSumIndicesRange == nil {
+					b.BitSumIndicesRange = make(map[int][]int)
+				}
+				b.BitSumIndicesRange[currentBitSum] = []int{startIndx, endIndxDetermined}
+				currentBitSum++
+				isCapturingRange = false
+				startIndx = endIndx
+				continue
+			}
+		}
+
+		if !isCapturingRange {
+			startIndx++
+		}
+		endIndx++
+	}
 }
 
 func ReadProblem2Textfile(filepath string) EdgeBitmap {
