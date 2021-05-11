@@ -8,21 +8,9 @@ import (
 )
 
 type WeightedEdgeArray struct {
-	NumNodes int
-	RawArr   [][]int
-}
-
-func (w *WeightedEdgeArray) FindEdgeOfHeadAndTail(head int, tail int) []int {
-	for i := 0; i < len(w.RawArr); i++ {
-		headNode := w.RawArr[i][0]
-		tailNode := w.RawArr[i][1]
-		if headNode == head && tailNode == tail {
-			return w.RawArr[i]
-		} else if headNode == tail && tailNode == head {
-			return w.RawArr[i]
-		}
-	}
-	return nil
+	NumNodes    int
+	RawArr      [][]int
+	UnionFinder UnionFinder
 }
 
 func (w *WeightedEdgeArray) Len() int {
@@ -69,4 +57,10 @@ func (w *WeightedEdgeArray) Less(i, j int) bool {
 
 func (w *WeightedEdgeArray) Swap(i, j int) {
 	w.RawArr[i], w.RawArr[j] = w.RawArr[j], w.RawArr[i]
+}
+
+func (w *WeightedEdgeArray) ExtractTopmost() (int, int, int) {
+	topmost := w.RawArr[0]
+	w.RawArr = w.RawArr[1:]
+	return topmost[0], topmost[1], topmost[2]
 }
