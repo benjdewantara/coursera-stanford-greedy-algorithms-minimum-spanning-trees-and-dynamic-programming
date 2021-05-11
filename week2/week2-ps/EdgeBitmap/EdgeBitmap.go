@@ -2,6 +2,7 @@ package EdgeBitmap
 
 import (
 	"io/ioutil"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -11,12 +12,25 @@ type EdgeBitmap struct {
 	BitSum []int
 }
 
+func (b *EdgeBitmap) Len() int {
+	return len(b.Arr)
+}
+
+func (b *EdgeBitmap) Less(i, j int) bool {
+	return b.BitSum[i] < b.BitSum[j]
+}
+
+func (b *EdgeBitmap) Swap(i, j int) {
+	b.BitSum[i], b.BitSum[j] = b.BitSum[j], b.BitSum[i]
+	b.Arr[i], b.Arr[j] = b.Arr[j], b.Arr[i]
+}
+
 func (b *EdgeBitmap) GetNumBitPerNode() int {
 	return len(b.Arr[0])
 }
 
-func (b *EdgeBitmap) GetNumNodes() int {
-	return len(b.Arr)
+func (b *EdgeBitmap) Sort() {
+	sort.Sort(b)
 }
 
 func ReadProblem2Textfile(filepath string) EdgeBitmap {

@@ -12,9 +12,11 @@ func Main2() {
 	unionFinder := WeightedEdgeArray.UnionFinder{}
 	unionFinder.Init(len(edgeBitmap.Arr))
 
+	edgeBitmap.Sort()
+
 	for edgeCost := 1; edgeCost <= edgeBitmap.GetNumBitPerNode(); edgeCost++ {
-		for nodeA := 1; nodeA <= edgeBitmap.GetNumNodes(); nodeA++ {
-			for nodeB := 1; nodeB < edgeBitmap.GetNumNodes(); nodeB++ {
+		for nodeA := 1; nodeA <= edgeBitmap.Len(); nodeA++ {
+			for nodeB := 1; nodeB < edgeBitmap.Len(); nodeB++ {
 				if nodeA == nodeB {
 					continue
 				}
