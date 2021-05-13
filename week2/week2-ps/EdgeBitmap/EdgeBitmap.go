@@ -107,3 +107,13 @@ func ReadProblem2Textfile(filepath string) EdgeBitmap {
 
 	return edgeBitmap
 }
+
+func GetDistanceBetween(nodeA []int, nodeB []int) int {
+	summed := 0
+	for i := 0; i < len(nodeA); i++ {
+		if nodeA[i] != nodeB[i] {
+			summed++
+		}
+	}
+	return summed
+}
