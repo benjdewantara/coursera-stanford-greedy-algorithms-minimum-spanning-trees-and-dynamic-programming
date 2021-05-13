@@ -8,39 +8,40 @@ import (
 func Main1() {
 	wEdgeArray := WeightedEdgeArray.ReadProblem1Textfile("_fe8d0202cd20a808db6a4d5d06be62f4_clustering1.txt")
 	wEdgeArray.Sort()
-	wEdgeArray.UnionFinder.Init(wEdgeArray.Len())
+	wEdgeArray.UnionFinder.Init(wEdgeArray.NumNodes)
 
-	for wEdgeArray.Len() > (4 - 1) {
+	for len(wEdgeArray.UnionFinder.LeadersDistinct) > 4 {
 		head, tail, _ := wEdgeArray.ExtractTopmost()
-
-		headHasLeader := wEdgeArray.UnionFinder.NodeHasLeader(head)
-		tailHasLeader := wEdgeArray.UnionFinder.NodeHasLeader(tail)
 
 		headLeader := wEdgeArray.UnionFinder.GetNodeLeader(head)
 		tailLeader := wEdgeArray.UnionFinder.GetNodeLeader(tail)
 
-		if headHasLeader && tailHasLeader {
-			if headLeader != tailLeader {
-				wEdgeArray.UnionFinder.MergeFollowers(headLeader, tailLeader)
-			}
-		} else if headHasLeader {
-			nodeLeader := wEdgeArray.UnionFinder.GetNodeLeader(head)
-			wEdgeArray.UnionFinder.AssociateNodeWithLeader(tail, nodeLeader)
-		} else if tailHasLeader {
-			nodeLeader := wEdgeArray.UnionFinder.GetNodeLeader(tail)
-			wEdgeArray.UnionFinder.AssociateNodeWithLeader(head, nodeLeader)
-		} else {
-			wEdgeArray.UnionFinder.AssociateNodeWithLeader(head, tail)
+		if headLeader == tailLeader {
+			continue
 		}
+
+		nodeLeader, nodeFollower := headLeader, tailLeader
+		if tailLeader < headLeader {
+			nodeLeader, nodeFollower = tailLeader, headLeader
+		}
+		wEdgeArray.UnionFinder.AssociateNodeWithLeader(nodeFollower, nodeLeader)
+		wEdgeArray.UnionFinder.MergeFollowers(nodeLeader, nodeFollower)
 	}
 
-	maxEdgeCost := -1
+	maxSpacing := -1
 	for wEdgeArray.Len() > 0 {
-		_, _, cost := wEdgeArray.ExtractTopmost()
-		if cost > maxEdgeCost {
-			maxEdgeCost = cost
+		head, tail, cost := wEdgeArray.ExtractTopmost()
+		headLeader := wEdgeArray.UnionFinder.GetNodeLeader(head)
+		tailLeader := wEdgeArray.UnionFinder.GetNodeLeader(tail)
+
+		if headLeader == tailLeader {
+			continue
+		}
+
+		if cost > maxSpacing {
+			maxSpacing = cost
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("maxEdgeCost = %d", maxEdgeCost))
+	fmt.Println(fmt.Sprintf("maxSpacing = %d", maxSpacing))
 }
