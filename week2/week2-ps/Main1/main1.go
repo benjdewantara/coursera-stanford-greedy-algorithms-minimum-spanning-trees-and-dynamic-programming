@@ -28,7 +28,8 @@ func Main1() {
 		wEdgeArray.UnionFinder.MergeFollowers(nodeLeader, nodeFollower)
 	}
 
-	maxSpacing := -1
+	minDistance := -1
+	maxDistance := -1
 	for wEdgeArray.Len() > 0 {
 		head, tail, cost := wEdgeArray.ExtractTopmost()
 		headLeader := wEdgeArray.UnionFinder.GetNodeLeader(head)
@@ -38,10 +39,15 @@ func Main1() {
 			continue
 		}
 
-		if cost > maxSpacing {
-			maxSpacing = cost
+		if minDistance == -1 {
+			minDistance = cost
+		}
+
+		if cost > maxDistance {
+			maxDistance = cost
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("maxSpacing = %d", maxSpacing))
+	fmt.Println(fmt.Sprintf("minDistance = %d", minDistance))
+	fmt.Println(fmt.Sprintf("maxDistance = %d", maxDistance))
 }
