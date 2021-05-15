@@ -55,6 +55,8 @@ func (b *EdgeBitmap) SortAndDetermineBitSumIndicesRange() {
 				isCapturingRange = false
 				startIndx = endIndx
 				continue
+			} else if endIndx == b.Len()-1 {
+				b.BitSumIndicesRange[currentBitSum] = []int{startIndx, endIndx}
 			}
 		}
 
