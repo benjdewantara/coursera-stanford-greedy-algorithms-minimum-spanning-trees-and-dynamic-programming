@@ -17,9 +17,9 @@ func Main2() {
 	edgeBitmap.SortAndDetermineBitSumIndicesRange()
 
 	for targetCost := 1; targetCost <= 2; targetCost++ {
-		for bitSumNodeA := 0; bitSumNodeA < edgeBitmap.GetNumBitPerNode()/2; bitSumNodeA++ {
-			for bitSumNodeB := bitSumNodeA; bitSumNodeB < edgeBitmap.GetNumBitPerNode()/2; bitSumNodeB++ {
-				if !IsPossibleToFormDistanceAtMost(bitSumNodeA, bitSumNodeB, targetCost) {
+		for bitSumNodeA := 0; bitSumNodeA <= edgeBitmap.GetNumBitPerNode(); bitSumNodeA++ {
+			for bitSumNodeB := bitSumNodeA; bitSumNodeB <= edgeBitmap.GetNumBitPerNode(); bitSumNodeB++ {
+				if !CanTwoBitSumsProduceDistance(bitSumNodeA, bitSumNodeB, targetCost) {
 					continue
 				}
 
@@ -72,6 +72,24 @@ func Main2() {
 	}
 
 	fmt.Println(fmt.Sprintf("len(unionFinder.LeadersDistinct) = %d", len(unionFinder.LeadersDistinct)))
+}
+
+func CanTwoBitSumsProduceDistance(bitSumA int, bitSumB int, distanceTarget int) bool {
+	bitSumSmall, bitSumLarge := bitSumA, bitSumB
+	if bitSumLarge < bitSumSmall {
+		bitSumSmall, bitSumLarge = bitSumLarge, bitSumSmall
+	}
+
+	for bitSum := 0; bitSum <= bitSumSmall; bitSum++ {
+		bitSumRight := bitSum
+		bitSumLeft := bitSumSmall - bitSumRight
+		distance := (bitSumLarge - bitSumLeft) + bitSumRight
+		if distance == distanceTarget {
+			return true
+		}
+	}
+
+	return false
 }
 
 func IsPossibleToFormDistanceAtMost(a int, b int, distanceAtMost int) bool {
