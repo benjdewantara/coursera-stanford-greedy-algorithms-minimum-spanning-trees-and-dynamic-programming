@@ -30,9 +30,11 @@ func (b *EdgeBitmap) GetNumBitPerNode() int {
 	return len(b.Arr[0])
 }
 
-func (b *EdgeBitmap) SortAndDetermineBitSumIndicesRange() {
+func (b *EdgeBitmap) Sort() {
 	sort.Sort(b)
+}
 
+func (b *EdgeBitmap) DetermineBitSumIndicesRange() {
 	currentBitSum := 0
 	startIndx, endIndx := 0, 0
 	isCapturingRange := false

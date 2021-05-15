@@ -14,7 +14,8 @@ func Main2() {
 	unionFinder := WeightedEdgeArray.UnionFinder{}
 	unionFinder.Init(edgeBitmap.Len())
 
-	edgeBitmap.SortAndDetermineBitSumIndicesRange()
+	edgeBitmap.Sort()
+	edgeBitmap.DetermineBitSumIndicesRange()
 
 	for targetCost := 1; targetCost <= 2; targetCost++ {
 		for bitSumNodeA := 0; bitSumNodeA <= edgeBitmap.GetNumBitPerNode(); bitSumNodeA++ {
@@ -22,6 +23,11 @@ func Main2() {
 				if !CanTwoBitSumsProduceDistance(bitSumNodeA, bitSumNodeB, targetCost) {
 					continue
 				}
+
+				fmt.Println(fmt.Sprintf("targetCost %d can be produced by %d\t%d",
+					targetCost,
+					bitSumNodeA,
+					bitSumNodeB))
 
 				bitSumNodeARange := edgeBitmap.BitSumIndicesRange[bitSumNodeA]
 				bitSumNodeBRange := edgeBitmap.BitSumIndicesRange[bitSumNodeB]
