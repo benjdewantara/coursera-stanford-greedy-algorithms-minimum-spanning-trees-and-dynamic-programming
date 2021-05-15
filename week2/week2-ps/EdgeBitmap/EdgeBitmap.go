@@ -70,6 +70,59 @@ func (b *EdgeBitmap) DetermineBitSumIndicesRange() {
 	}
 }
 
+func (b *EdgeBitmap) GetNodesWithDistanceOne(nodeBits []int) []int {
+	nodes := make([]int, 0)
+
+	baseTen := convertNodeBitsToDecimal(nodeBits)
+	for i := 0; i < b.GetNumBitPerNode(); i++ {
+		pow := (len(nodeBits) - 1) - i
+		term := uint(1 << pow)
+
+		baseTenShifted := baseTen ^ term
+		existingDistancedNodes := b.NodeBitDecimalArr[baseTenShifted]
+		if existingDistancedNodes != nil {
+			nodes = append(nodes, existingDistancedNodes...)
+		}
+	}
+
+	return nodes
+}
+
+func (b *EdgeBitmap) GetNodesWithDistanceTwo(nodeBits []int) []int {
+	nodes := make([]int, 0)
+
+	baseTen := convertNodeBitsToDecimal(nodeBits)
+	for i := 0; i < b.GetNumBitPerNode(); i++ {
+		for j := i + 1; j < b.GetNumBitPerNode(); j++ {
+			pow := (len(nodeBits) - 1) - i
+			term := uint(1 << pow)
+
+			pow = (len(nodeBits) - 1) - j
+			term += uint(1 << pow)
+			baseTenShifted := baseTen ^ term
+
+			existingDistancedNodes := b.NodeBitDecimalArr[baseTenShifted]
+			if existingDistancedNodes != nil {
+				nodes = append(nodes, existingDistancedNodes...)
+			}
+		}
+	}
+
+	return nodes
+}
+
+func convertNodeBitsToDecimal(nodeBits []int) uint {
+	var num uint = 0
+	for i := 0; i < len(nodeBits); i++ {
+		if nodeBits[i] == 1 {
+			pow := (len(nodeBits) - 1) - i
+			term := uint(1 << pow)
+			num += term
+		}
+	}
+	return num
+}
+
 func ReadProblem2Textfile(filepath string) EdgeBitmap {
 	contentBytes, _ := ioutil.ReadFile(filepath)
 
