@@ -11,6 +11,7 @@ type EdgeBitmap struct {
 	Arr                [][]int
 	BitSum             []int
 	BitSumIndicesRange map[int][]int
+	NodeBitDecimalArr  map[uint][]int
 }
 
 func (b *EdgeBitmap) Len() int {
@@ -74,6 +75,7 @@ func ReadProblem2Textfile(filepath string) EdgeBitmap {
 
 	edgeBitmap := EdgeBitmap{}
 	var numNodes, numBitPerNode int
+	edgeBitmap.NodeBitDecimalArr = make(map[uint][]int)
 
 	for rowIndx, intStr := range strings.Split(string(contentBytes), "\n") {
 		if numNodes == 0 {
@@ -96,6 +98,7 @@ func ReadProblem2Textfile(filepath string) EdgeBitmap {
 
 		splitStr := strings.Split(intStr, " ")
 		summed := 0
+		var summedBitDecimal uint = 0
 		for i := 0; i < len(splitStr); i++ {
 			if splitStr[i] == "" {
 				continue
@@ -104,9 +107,21 @@ func ReadProblem2Textfile(filepath string) EdgeBitmap {
 			bitUnit, _ := strconv.Atoi(splitStr[i])
 			edgeBitmap.Arr[rowIndx-1][i] = bitUnit
 			summed += bitUnit
+
+			if bitUnit == 1 {
+				var pow = uint(23 - i)
+				var term = uint(1 << pow)
+				summedBitDecimal += term
+			}
 		}
 
-		edgeBitmap.BitSum[rowIndx-1] = summed
+		nodeIndx := rowIndx - 1
+		edgeBitmap.BitSum[nodeIndx] = summed
+		nodesWithSummedBitDecimal := edgeBitmap.NodeBitDecimalArr[summedBitDecimal]
+		if nodesWithSummedBitDecimal == nil {
+			nodesWithSummedBitDecimal = make([]int, 0)
+		}
+		edgeBitmap.NodeBitDecimalArr[summedBitDecimal] = append(nodesWithSummedBitDecimal, nodeIndx)
 	}
 
 	return edgeBitmap
