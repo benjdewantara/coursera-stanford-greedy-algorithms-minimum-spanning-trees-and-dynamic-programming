@@ -12,22 +12,51 @@ func Main2() {
 	unionFinder := WeightedEdgeArray.UnionFinder{}
 	unionFinder.Init(edgeBitmap.Len())
 
+	// fuse all nodes that have the same coordinate
+	for _, nodes := range edgeBitmap.NodeBitDecimalArr {
+		if len(nodes) > 1 {
+			for nodeIdx := 0; nodeIdx <= len(nodes)-2; nodeIdx++ {
+				nodeAIdx, nodeBIdx := nodes[nodeIdx], nodes[nodeIdx+1]
+				nodeA, nodeB := nodeAIdx+1, nodeBIdx+1
+
+				nodeALeader, nodeBLeader := unionFinder.GetNodeLeader(nodeA), unionFinder.GetNodeLeader(nodeB)
+
+				nodeLeader, nodeFollower := nodeALeader, nodeBLeader
+				if nodeFollower < nodeLeader {
+					nodeLeader, nodeFollower = nodeFollower, nodeLeader
+				}
+
+				unionFinder.AssociateNodeWithLeader(nodeFollower, nodeLeader)
+				unionFinder.MergeFollowers(nodeLeader, nodeFollower)
+			}
+		}
+	}
+
 	edgesWithDistanceOneTwo := make([][2]int, 0)
+
+	// get all edges with distance 1
 	for nodeIdx := 0; nodeIdx < edgeBitmap.Len(); nodeIdx++ {
 		nodeBits := edgeBitmap.Arr[nodeIdx]
 		nodesDist1 := edgeBitmap.GetNodesWithDistanceOne(nodeBits)
 		if len(nodesDist1) > 0 {
 			for _, node2 := range nodesDist1 {
+				if node2 < nodeIdx {
+					continue
+				}
 				edgesWithDistanceOneTwo = append(edgesWithDistanceOneTwo, [2]int{nodeIdx, node2})
 			}
 		}
 	}
 
+	// get all edges with distance 2
 	for nodeIdx := 0; nodeIdx < edgeBitmap.Len(); nodeIdx++ {
 		nodeBits := edgeBitmap.Arr[nodeIdx]
 		nodesDist2 := edgeBitmap.GetNodesWithDistanceTwo(nodeBits)
 		if len(nodesDist2) > 0 {
 			for _, node2 := range nodesDist2 {
+				if node2 < nodeIdx {
+					continue
+				}
 				edgesWithDistanceOneTwo = append(edgesWithDistanceOneTwo, [2]int{nodeIdx, node2})
 			}
 		}
