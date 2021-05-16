@@ -111,6 +111,34 @@ func (b *EdgeBitmap) GetNodesWithDistanceTwo(nodeBits []int) []int {
 	return nodes
 }
 
+func (b *EdgeBitmap) GetNodesWithDistanceThree(nodeBits []int) []int {
+	nodes := make([]int, 0)
+
+	baseTen := convertNodeBitsToDecimal(nodeBits)
+	for i := 0; i < b.GetNumBitPerNode(); i++ {
+		for j := i + 1; j < b.GetNumBitPerNode(); j++ {
+			for k := j + 1; k < b.GetNumBitPerNode(); k++ {
+				pow := (len(nodeBits) - 1) - i
+				term := uint(1 << pow)
+
+				pow = (len(nodeBits) - 1) - j
+				term += uint(1 << pow)
+
+				pow = (len(nodeBits) - 1) - k
+				term += uint(1 << pow)
+				baseTenShifted := baseTen ^ term
+
+				existingDistancedNodes := b.NodeBitDecimalArr[baseTenShifted]
+				if existingDistancedNodes != nil {
+					nodes = append(nodes, existingDistancedNodes...)
+				}
+			}
+		}
+	}
+
+	return nodes
+}
+
 func convertNodeBitsToDecimal(nodeBits []int) uint {
 	var num uint = 0
 	for i := 0; i < len(nodeBits); i++ {
