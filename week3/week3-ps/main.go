@@ -14,5 +14,24 @@ func main() {
         a.MergeTwoLeastWeight()
     }
 
-    fmt.Println("Hell on earth")
+    maxDepth := -1
+    minDepth := -1
+
+    for i := 0; i < len(a.Depths); i++ {
+        if i == 0 {
+            maxDepth, minDepth = a.Depths[i], a.Depths[i]
+            continue
+        }
+
+        if a.Depths[i] < minDepth {
+            minDepth = a.Depths[i]
+        }
+
+        if maxDepth < a.Depths[i] {
+            maxDepth = a.Depths[i]
+        }
+    }
+
+    fmt.Printf("maxDepth = %d\n", maxDepth)
+    fmt.Printf("minDepth = %d\n", minDepth)
 }
