@@ -1,7 +1,7 @@
 package ArrHeap
 
 import (
-    "fmt"
+    "container/heap"
     "io/ioutil"
     "strconv"
     "strings"
@@ -9,7 +9,18 @@ import (
 
 type ArrHeap struct {
     ArrWeight []int
-    ArrLabel  []string
+    ArrLabel  [][]int
+}
+
+func (a *ArrHeap) MergeTwoLeastWeight() {
+    popped1 := heap.Pop(a).(WeightLabel)
+    popped2 := heap.Pop(a).(WeightLabel)
+    mergedNode := WeightLabel{
+        Weight: popped1.Weight + popped2.Weight,
+        Label:  append(popped1.Label, popped2.Label...),
+    }
+
+    heap.Push(a, mergedNode)
 }
 
 func (a *ArrHeap) Len() int {
@@ -34,9 +45,9 @@ func (a *ArrHeap) Push(x interface{}) {
 func (a *ArrHeap) Pop() interface{} {
     oldLen := len(a.ArrWeight)
 
-    lastIndx := a.ArrWeight[oldLen-1]
-    lastElm := a.ArrWeight[lastIndx-1]
-    lastLabel := a.ArrLabel[lastIndx-1]
+    lastIndx := oldLen - 1
+    lastElm := a.ArrWeight[lastIndx]
+    lastLabel := a.ArrLabel[lastIndx]
 
     a.ArrWeight = a.ArrWeight[0 : oldLen-1]
     a.ArrLabel = a.ArrLabel[0 : oldLen-1]
@@ -45,13 +56,13 @@ func (a *ArrHeap) Pop() interface{} {
 
 func ReadTextfile(filepath string) ArrHeap {
     contentBytes, _ := ioutil.ReadFile(filepath)
-    var arrHeap = ArrHeap{}
+    var a = ArrHeap{}
 
     for lineIndx, intStr := range strings.Split(string(contentBytes), "\n") {
-        if arrHeap.ArrWeight == nil {
+        if a.ArrWeight == nil {
             numNodes, _ := strconv.Atoi(intStr)
-            arrHeap.ArrWeight = make([]int, numNodes)
-            arrHeap.ArrLabel = make([]string, numNodes)
+            a.ArrWeight = make([]int, numNodes)
+            a.ArrLabel = make([][]int, numNodes)
             continue
         }
 
@@ -60,9 +71,9 @@ func ReadTextfile(filepath string) ArrHeap {
         }
 
         num, _ := strconv.Atoi(intStr)
-        arrHeap.ArrWeight[lineIndx-1] = num
-        arrHeap.ArrLabel[lineIndx-1] = fmt.Sprintf("%d", lineIndx)
+        a.ArrWeight[lineIndx-1] = num
+        a.ArrLabel[lineIndx-1] = []int{lineIndx}
     }
 
-    return arrHeap
+    return a
 }
