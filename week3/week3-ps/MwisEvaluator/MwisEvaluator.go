@@ -9,61 +9,75 @@ import (
 
 type MwisEvaluator struct {
 	MwisResultCached map[string][]int
+	Weights          []int
+	Vertices         []int
 }
 
-func (e *MwisEvaluator) Mwis(arr []int) []int {
-	cachedResult := e.MwisResultCached[ArrUtility(arr).StringJoined()]
+func (e *MwisEvaluator) Mwis(vertices []int) []int {
+	cachedResult := e.MwisResultCached[ArrUtility(vertices).StringJoined()]
 	if cachedResult != nil {
 		return cachedResult
 	}
 
-	if len(arr) == 2 {
-		if arr[0] < arr[1] {
-			return arr[1:2]
+	if len(vertices) == 2 {
+		if e.GetWeightAtVertex(vertices[0]) < e.GetWeightAtVertex(vertices[1]) {
+			return vertices[1:2]
 		} else {
-			return arr[0:1]
+			return vertices[0:1]
 		}
-	} else if len(arr) == 1 {
-		return arr[0:1]
+	} else if len(vertices) == 1 {
+		return vertices[0:1]
 	}
 
-	lastIndx := len(arr) - 1
+	lastIndx := len(vertices) - 1
 	withoutVn := make([]int, 0)
-	withoutVn = append(withoutVn, e.Mwis(arr[0:lastIndx])...)
+	withoutVn = append(withoutVn, e.Mwis(vertices[0:lastIndx])...)
 
 	withVn := make([]int, 0)
-	withVn = append(withVn, e.Mwis(arr[0:lastIndx-1])...)
-	withVn = append(withVn, arr[lastIndx:]...)
+	withVn = append(withVn, e.Mwis(vertices[0:lastIndx-1])...)
+	withVn = append(withVn, vertices[lastIndx:]...)
 
-	maxWithoutVn := Sum(withoutVn)
-	maxWithVn := Sum(withVn)
+	maxWithoutVn := e.SumWhoseVertices(withoutVn)
+	maxWithVn := e.SumWhoseVertices(withVn)
 	result := withoutVn
 
 	if maxWithoutVn < maxWithVn {
 		result = withVn
 	}
 
-	e.MwisResultCached[ArrUtility(arr).StringJoined()] = result
+	e.MwisResultCached[ArrUtility(vertices).StringJoined()] = result
 
 	return result
 }
 
-func Sum(arr []int) int {
+func (e *MwisEvaluator) GetWeightAtVertex(vertex int) int {
+	return e.Weights[vertex-1]
+}
+
+func (e *MwisEvaluator) MwisBegin() []int {
+	maxWeightIndependentSetResult := e.Mwis(e.Vertices)
+	return maxWeightIndependentSetResult
+}
+
+func (e *MwisEvaluator) SumWhoseVertices(vertices []int) int {
 	summed := 0
-	for i := 0; i < len(arr); i++ {
-		summed += arr[i]
+	for i := 0; i < len(vertices); i++ {
+		summed += e.GetWeightAtVertex(vertices[i])
 	}
 	return summed
 }
 
-func ReadTextfile(filepath string) []int {
+func ReadTextfile(filepath string) MwisEvaluator {
 	contentBytes, _ := ioutil.ReadFile(filepath)
-	var arr []int
+	mwisEvaluator := MwisEvaluator{
+		MwisResultCached: make(map[string][]int),
+	}
 
 	for lineIndx, intStr := range strings.Split(string(contentBytes), "\n") {
-		if arr == nil {
+		if mwisEvaluator.Weights == nil {
 			numLen, _ := strconv.Atoi(intStr)
-			arr = make([]int, numLen)
+			mwisEvaluator.Weights = make([]int, numLen)
+			mwisEvaluator.Vertices = make([]int, numLen)
 			continue
 		}
 
@@ -72,10 +86,11 @@ func ReadTextfile(filepath string) []int {
 		}
 
 		num, _ := strconv.Atoi(intStr)
-		arr[lineIndx-1] = num
+		mwisEvaluator.Weights[lineIndx-1] = num
+		mwisEvaluator.Vertices[lineIndx-1] = lineIndx
 	}
 
-	return arr
+	return mwisEvaluator
 }
 
 type ArrUtility []int
