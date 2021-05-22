@@ -14,11 +14,22 @@ type Knapsack struct {
 	Terms       map[string]int
 }
 
+//func (k *Knapsack) OptimalBackwardCalculation() int {
+//	optimalValue := -1
+//	for i := k.Len() - 1; i >= 0; i-- {
+//		for x := k.MaxCapacity; x >= 0; x-- {
+//
+//		}
+//	}
+//
+//	return optimalValue
+//}
+
 func (k *Knapsack) Optimal() int {
 	optimalValue := -1
 	for i := 0; i < k.Len(); i++ {
 		for x := 0; x <= k.MaxCapacity; x++ {
-			term := k.getTerm(i, x)
+			term := k.GetTerm(i, x)
 			if optimalValue == -1 {
 				optimalValue = term
 				continue
@@ -41,7 +52,7 @@ func (k *Knapsack) Len() int {
 	return len(k.Weights)
 }
 
-func (k *Knapsack) getTerm(i int, x int) int {
+func (k *Knapsack) GetTerm(i int, x int) int {
 	term, exists := k.Terms[TermKeyString(i, x)]
 	if exists {
 		return term
@@ -51,10 +62,10 @@ func (k *Knapsack) getTerm(i int, x int) int {
 		return 0
 	}
 
-	option1 := k.getTerm(i-1, x)
+	option1 := k.GetTerm(i-1, x)
 	option2 := 0
 	if k.Weights[i] <= x {
-		option2 = k.getTerm(i-1, x-k.Weights[i]) + k.Values[i]
+		option2 = k.GetTerm(i-1, x-k.Weights[i]) + k.Values[i]
 	}
 	maxOption := option1
 
