@@ -9,7 +9,6 @@ func main() {
 	k := Knapsack.ReadTextfile("_6dfda29c18c77fd14511ba8964c2e265_knapsack1.txt")
 	//k := Knapsack.ReadTextfile("test_knapsack1.txt")
 	optimal := k.Optimal()
-	//optimal := k.OptimalBackwardCalculation()
 	fmt.Printf("optimal = %d\n", optimal)
 
 	termOptimal1 := k.GetTerm(k.Len()-1, k.MaxCapacity)

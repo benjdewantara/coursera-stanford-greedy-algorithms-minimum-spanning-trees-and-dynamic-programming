@@ -14,17 +14,6 @@ type Knapsack struct {
 	Terms       map[string]int
 }
 
-//func (k *Knapsack) OptimalBackwardCalculation() int {
-//	optimalValue := -1
-//	for i := k.Len() - 1; i >= 0; i-- {
-//		for x := k.MaxCapacity; x >= 0; x-- {
-//
-//		}
-//	}
-//
-//	return optimalValue
-//}
-
 func (k *Knapsack) Optimal() int {
 	optimalValue := -1
 	for i := 0; i < k.Len(); i++ {
